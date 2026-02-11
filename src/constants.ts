@@ -5,6 +5,8 @@ export const CLASS_NAME = {
   modalBackdrop: 'modal__backdrop',
   modalSlot: 'modal-slot',
   modalCloseButton: 'close-btn',
+  form: 'add-form',
+  addButton: 'add-btn',
   control: 'control',
   controlLabel: 'control__label',
   controlInput: 'control__input',
@@ -13,3 +15,8 @@ export const CLASS_NAME = {
 } as const;
 
 export const MENU = ['IMAGE', 'VIDEO', 'NOTE', 'TASK'] as const;
+
+export const FormLabel = {
+  title: 'Title',
+  body: 'Body',
+} as const;

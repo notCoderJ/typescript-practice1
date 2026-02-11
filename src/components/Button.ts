@@ -8,8 +8,16 @@ export const ButtonSize = {
 
 export type ButtonSize = (typeof ButtonSize)[keyof typeof ButtonSize];
 
+export const ButtonType = {
+  button: 'button',
+  submit: 'submit',
+} as const;
+
+export type ButtonType = (typeof ButtonType)[keyof typeof ButtonType];
+
 type ButtonProps = Props<
   Partial<{
+    type: ButtonType;
     label: string;
     size: ButtonSize;
     classList: string[];
@@ -17,17 +25,20 @@ type ButtonProps = Props<
 >;
 
 interface Button extends Component<ButtonProps> {
-  onClick(e?: Event): void;
+  onClick?: ((e?: Event) => void) | undefined;
 }
 
 export default class ButtonComponent implements Button {
   private buttonEl: HTMLButtonElement | null = null;
-  private handleClick = (e: Event) => this.onClick(e);
+  private handleClick: (() => void) | null = null;
 
   constructor(
     public readonly props: ButtonProps,
-    public onClick: (e?: Event) => void,
+    public onClick?: (e?: Event) => void,
   ) {
+    if (this.onClick) {
+      this.handleClick = this.onClick.bind(this);
+    }
     this.buttonEl = this.createButtonEl(this.props);
     this.mount();
   }
@@ -37,7 +48,9 @@ export default class ButtonComponent implements Button {
   public unMount(): void {
     if (!this.buttonEl) return;
 
-    this.buttonEl.removeEventListener('click', this.handleClick);
+    if (this.handleClick) {
+      this.buttonEl.removeEventListener('click', this.handleClick);
+    }
     this.buttonEl.remove();
     this.buttonEl = null;
   }
@@ -52,11 +65,19 @@ export default class ButtonComponent implements Button {
   }
 
   private createButtonEl(props: ButtonProps): HTMLButtonElement {
-    const { label = '', size = ButtonSize.m, classList = [] } = props;
+    const {
+      type = ButtonType.button,
+      label = '',
+      size = ButtonSize.m,
+      classList = [],
+    } = props;
     const buttonEl = document.createElement<'button'>('button');
+    buttonEl.type = type;
     buttonEl.textContent = label;
     buttonEl.classList.add('styled-button', size, ...classList);
-    buttonEl.addEventListener('click', this.handleClick);
+    if (this.handleClick) {
+      buttonEl.addEventListener('click', this.handleClick);
+    }
     return buttonEl;
   }
 }

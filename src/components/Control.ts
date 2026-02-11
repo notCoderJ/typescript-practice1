@@ -16,7 +16,9 @@ type ControlProps = Props<{
 }>;
 
 export interface Control extends Component<ControlProps> {
+  readonly label: string;
   readonly value: string;
+  setType(type: ControlType): Control;
   clear(): void;
   focus(): void;
 }
@@ -25,6 +27,7 @@ export default class ControlComponent implements Control {
   private controlEl: HTMLParagraphElement | null = null;
   private inputEl: HTMLInputElement | HTMLTextAreaElement | null = null;
   private _type: ControlType = ControlType.text;
+  private _label = '';
   private _value = '';
   private handleChange = (e: Event) => {
     const target = e.target as HTMLInputElement | HTMLTextAreaElement;
@@ -32,8 +35,13 @@ export default class ControlComponent implements Control {
   };
 
   constructor(public readonly props: ControlProps) {
+    this._label = this.props.label;
     this.controlEl = this.createControlEl(this.props);
     this.mount();
+  }
+
+  public get label(): string {
+    return this._label;
   }
 
   public get value(): string {
