@@ -1,3 +1,4 @@
+import type { Props } from '../interface';
 import type { Component } from '../interface';
 
 export const ButtonSize = {
@@ -7,7 +8,7 @@ export const ButtonSize = {
 
 export type ButtonSize = (typeof ButtonSize)[keyof typeof ButtonSize];
 
-type ButtonProps = Readonly<
+type ButtonProps = Props<
   Partial<{
     label: string;
     size: ButtonSize;
@@ -47,7 +48,7 @@ export default class ButtonComponent implements Button {
     }
 
     const parent = target ?? document.body;
-    parent.appendChild(this.buttonEl);
+    parent.append(this.buttonEl);
   }
 
   private createButtonEl(props: ButtonProps): HTMLButtonElement {

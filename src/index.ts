@@ -1,4 +1,5 @@
 import Button from './components/Button.js';
+import HeaderComponent from './components/Header.js';
 import { CLASS_NAME, MENU } from './constants.js';
 
 const menuButtons = MENU.map<Button>(
@@ -9,5 +10,10 @@ const menuButtons = MENU.map<Button>(
     ),
 );
 
-const headerEl = document.querySelector('.app__header');
-menuButtons.forEach((btn) => btn.render(headerEl));
+const appHeader = new HeaderComponent({
+  title: 'MOTION',
+  children: menuButtons,
+});
+
+const app = document.querySelector('.app');
+appHeader.render(app);
