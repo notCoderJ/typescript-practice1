@@ -11,14 +11,23 @@ interface Modal {
 }
 
 export default class ModalService implements Modal {
+  private isOpened = false;
   private modalBackdrop: HTMLDivElement | null = null;
   private modalSlot: HTMLElement | null = null;
   private modalComponent: Component<Props<{}>> | null = null;
+  private handleKeyClose = (e: KeyboardEvent) => {
+    if (e.code === 'Escape') {
+      this.hide();
+    }
+  };
 
   public build(target?: Element | null): void {
     const parent = target ?? document.body;
     this.modalBackdrop = document.createElement<'div'>('div');
-    this.modalBackdrop.classList.add(CLASS_NAME.modalBackdrop, 'hidden');
+    this.modalBackdrop.classList.add(
+      CLASS_NAME.modalBackdrop,
+      CLASS_NAME.hidden,
+    );
     this.modalBackdrop.setAttribute('data-action', MODAL_ACTION.close);
     this.modalBackdrop.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLElement;
@@ -26,6 +35,7 @@ export default class ModalService implements Modal {
         this.hide();
       }
     });
+    document.body.addEventListener('keydown', this.handleKeyClose);
 
     this.modalSlot = document.createElement<'section'>('section');
     this.modalSlot.className = CLASS_NAME.modalSlot;
@@ -50,16 +60,21 @@ export default class ModalService implements Modal {
 
     this.modalBackdrop?.remove();
     this.modalBackdrop = null;
+    this.isOpened = false;
+
+    document.body.removeEventListener('keydown', this.handleKeyClose);
   }
 
   public show(target: Component<Props<{}>> | null = null): void {
     this.modalComponent = target;
     this.modalComponent?.render(this.modalSlot);
-    this.modalBackdrop?.classList.remove('hidden');
+    this.modalBackdrop?.classList.remove(CLASS_NAME.hidden);
+    this.isOpened = true;
   }
 
   public hide(): void {
     this.modalComponent?.unMount();
-    this.modalBackdrop?.classList.add('hidden');
+    this.modalBackdrop?.classList.add(CLASS_NAME.hidden);
+    this.isOpened = false;
   }
 }
