@@ -74,6 +74,7 @@ export default class ModalService implements Modal {
 
   public hide(): void {
     this.modalComponent?.unMount();
+    this.modalComponent = null;
     this.modalBackdrop?.classList.add(CLASS_NAME.hidden);
     this.isOpened = false;
   }

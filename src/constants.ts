@@ -10,8 +10,18 @@ export const CLASS_NAME = {
   control: 'control',
   controlLabel: 'control__label',
   controlInput: 'control__input',
+  contentItem: 'content',
+  contentFigure: 'content__figure',
+  contentText: 'content__description',
+  contentTitle: 'content__title',
+  itemRemoveButton: 'rm-btn',
   scroll: 'scroll',
   hidden: 'hidden',
+} as const;
+
+export const FIGURE_SIZE = {
+  width: 480,
+  height: 240,
 } as const;
 
 export const MENU = ['IMAGE', 'VIDEO', 'NOTE', 'TASK'] as const;
