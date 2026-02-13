@@ -10,6 +10,7 @@ export const CLASS_NAME = {
   control: 'control',
   controlLabel: 'control__label',
   controlInput: 'control__input',
+  contentList: 'app__contents',
   contentItem: 'content',
   contentFigure: 'content__figure',
   contentText: 'content__description',

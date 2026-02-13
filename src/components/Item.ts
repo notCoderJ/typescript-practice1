@@ -3,7 +3,7 @@ import { CLASS_NAME } from '../constants.js';
 
 type ItemProps = Props<{}>;
 
-interface Item extends Component<ItemProps> {
+export interface Item extends Component<ItemProps> {
   readonly id: number;
   onRemove: (item: Item) => void;
 }

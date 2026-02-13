@@ -6,6 +6,7 @@ import ControlComponent from './components/Control.js';
 import FormComponent from './components/Form.js';
 import HeaderComponent from './components/Header.js';
 import ItemComponent from './components/Item.js';
+import ListComponent from './components/List.js';
 import { CLASS_NAME, FormLabel, MENU } from './constants.js';
 import ModalService from './modal.js';
 
@@ -16,7 +17,9 @@ modal.build(root);
 const titleControl = new ControlComponent({ label: FormLabel.title });
 const bodyControl = new ControlComponent({ label: FormLabel.body });
 
-const listEl = document.querySelector('.app__contents');
+const app = document.querySelector('.app');
+const list = new ListComponent({});
+list.render(app);
 
 const menuButtons = MENU.map<Button>(
   (menu) =>
@@ -25,7 +28,7 @@ const menuButtons = MENU.map<Button>(
       () =>
         modal.show(
           new FormComponent({}, () => {
-            createItemTemp(menu)?.render(listEl);
+            list.add(createItemTemp(menu));
             modal.hide();
           }).setControls(titleControl, bodyControl),
         ),
@@ -37,15 +40,15 @@ const appHeader = new HeaderComponent({
   children: menuButtons,
 });
 
-const app = document.querySelector('.app');
 appHeader.render(app);
 
 function createItemTemp(
   menu: 'IMAGE' | 'VIDEO' | 'NOTE' | 'TASK',
-): ItemComponent | null {
+): ItemComponent {
+  let item: ItemComponent;
   switch (menu) {
     case 'IMAGE':
-      return new ItemComponent(
+      item = new ItemComponent(
         {
           children: [
             new ImageContentComponent({
@@ -55,10 +58,11 @@ function createItemTemp(
             new TextContentComponent({ title: 'Image' }),
           ],
         },
-        (item) => console.log(`${item.id} removed!!`),
+        (item) => list.remove(item),
       );
+      break;
     case 'VIDEO':
-      return new ItemComponent(
+      item = new ItemComponent(
         {
           children: [
             new VideoContentComponent({
@@ -68,11 +72,12 @@ function createItemTemp(
             new TextContentComponent({ title: 'Video' }),
           ],
         },
-        (item) => console.log(`${item.id} removed!!`),
+        (item) => list.remove(item),
       );
+      break;
     case 'NOTE':
     case 'TASK':
-      return new ItemComponent(
+      item = new ItemComponent(
         {
           children: [
             new TextContentComponent({
@@ -85,11 +90,10 @@ function createItemTemp(
             }),
           ],
         },
-        (item) => console.log(`${item.id} removed!!`),
+        (item) => list.remove(item),
       );
-    default:
-      new Error(`not supported menu ${menu}`);
+      break;
   }
 
-  return null;
+  return item;
 }
