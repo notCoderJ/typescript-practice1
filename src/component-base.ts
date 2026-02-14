@@ -2,45 +2,55 @@ type Props = Record<string, any>;
 export type RenderOrder = 'first' | 'last';
 
 export interface Component<P extends Props, C extends Component<any, any>> {
-  setProps(props: P): Component<P, C>;
+  setProps(props: Partial<P>): Component<P, C>;
   setChildren(children: C[]): Component<P, C>;
   unMount(): void;
   render(target: Element | null, order?: RenderOrder): void;
 }
 
 export default abstract class ComponentBase<
-  P extends Props,
   E extends HTMLElement,
+  P extends Props,
   C extends Component<any, any>,
 > implements Component<P, C> {
   private parent: Element | null = null;
   private host: E | null = null;
-  private props: P | undefined;
-  private children: C[] = [];
+  protected props: P;
+  protected children: C[] = [];
 
-  constructor(props: P) {
-    this.host = this.createHostElement(props);
-    this.props = props;
+  constructor(initialProps: P = {} as P) {
+    this.props = initialProps;
+    this.host = this.createHostElement(this.props);
   }
 
   protected abstract createHostElement(props: P): E;
-  protected abstract refreshHost(props: P): void;
-
+  protected abstract rerenderByProps(host: E, props: P): void;
   protected clear(): void {}
 
-  protected renderChildren(host: E | null): void {
-    this.children.forEach((child) => child.render(host));
+  protected rerenderByChildren(host: E, prev: C[], next: C[]): void {
+    this.removeChildren(prev);
+    this.renderChildren(host, next);
   }
 
-  public setProps(props: P): Component<P, C> {
+  protected renderChildren(target: HTMLElement | null, children: C[]): void {
+    children.forEach((child) => child.render(target));
+  }
+
+  protected removeChildren(children: C[]): void {
+    children.forEach((child) => child.unMount());
+  }
+
+  public setProps(props: Partial<P>): Component<P, C> {
+    if (!this.host) return this;
     this.props = { ...this.props, ...props };
-    this.refreshHost(this.props);
+    this.rerenderByProps(this.host, this.props);
     return this;
   }
 
   public setChildren(children: C[]): Component<P, C> {
+    if (!this.host) return this;
+    this.rerenderByChildren(this.host, this.children, children);
     this.children = children;
-    this.renderChildren(this.host);
     return this;
   }
 
@@ -48,7 +58,7 @@ export default abstract class ComponentBase<
     if (!this.host) return;
 
     this.clear();
-    this.children.forEach((child) => child.unMount());
+    this.removeChildren(this.children);
     this.children = [];
     this.host.remove();
     this.host = null;
