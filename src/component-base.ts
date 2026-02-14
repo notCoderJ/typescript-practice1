@@ -24,8 +24,8 @@ export default abstract class ComponentBase<
   }
 
   protected abstract createHostElement(props: P): E;
-  protected abstract rerenderByProps(host: E, props: P): void;
   protected clear(): void {}
+  protected rerenderByProps(host: E, props: P): void {}
 
   protected rerenderByChildren(host: E, prev: C[], next: C[]): void {
     this.removeChildren(prev);

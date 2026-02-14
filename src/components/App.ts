@@ -20,7 +20,7 @@ const MENUS: Menu[] = [
   { label: 'TASK', type: 'task' },
 ];
 
-export type AppProps = Record<string, unknown>;
+type AppProps = Record<string, unknown>;
 
 export default class AppComponent extends ComponentBase<
   HTMLElement,
@@ -42,10 +42,6 @@ export default class AppComponent extends ComponentBase<
     hostEl.prepend(headerEl);
 
     return hostEl;
-  }
-
-  protected rerenderByProps(host: HTMLElement, props: AppProps): void {
-    console.log(host, props);
   }
 
   private createHeader(): HTMLElement {

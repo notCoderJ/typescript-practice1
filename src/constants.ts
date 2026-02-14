@@ -21,11 +21,6 @@ export const CLASS_NAME = {
   hidden: 'hidden',
 } as const;
 
-export const FIGURE_SIZE = {
-  width: 480,
-  height: 240,
-} as const;
-
 export const FormLabel = {
   title: 'Title',
   body: 'Body',

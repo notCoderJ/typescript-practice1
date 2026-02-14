@@ -15,7 +15,7 @@ export const ButtonType = {
 
 export type ButtonType = (typeof ButtonType)[keyof typeof ButtonType];
 
-export type ButtonProps = Partial<{
+type ButtonProps = Partial<{
   type: ButtonType;
   label: string;
   size: ButtonSize;
@@ -30,7 +30,7 @@ export default class ButtonComponent
   extends ComponentBase<HTMLButtonElement, ButtonProps, Component<any, any>>
   implements Button
 {
-  private onClick: ((e?: PointerEvent) => void) | null = null;
+  private onClick: (e?: PointerEvent) => void = () => {};
 
   public setClickHandler(onClick: (e?: PointerEvent) => void): ButtonComponent {
     this.onClick = onClick;
@@ -44,11 +44,14 @@ export default class ButtonComponent
     hostEl.textContent = label;
     hostEl.className = `styled-button ${size}`;
     hostEl.classList.add(...classList);
-    hostEl.addEventListener('click', (e) => this.onClick && this.onClick(e));
+    hostEl.addEventListener('click', (e) => this.onClick(e));
     return hostEl;
   }
 
-  protected rerenderByProps(host: HTMLButtonElement, props: ButtonProps): void {
+  protected override rerenderByProps(
+    host: HTMLButtonElement,
+    props: ButtonProps,
+  ): void {
     const { type, label, size, classList = [] } = this.mergeDefaultProps(props);
     host.type = type;
     host.textContent = label;
