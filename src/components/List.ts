@@ -1,5 +1,5 @@
 import type { Item } from './item/Item';
-import ComponentBase, { type Component } from '../component-base.js';
+import ComponentBase, { type Component } from './component-base.js';
 import { CLASS_NAME } from '../constants.js';
 
 type ListProps = Record<string, unknown>;

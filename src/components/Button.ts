@@ -1,5 +1,5 @@
-import type { Component } from '../component-base';
-import ComponentBase from '../component-base.js';
+import type { Component } from './component-base';
+import ComponentBase from './component-base.js';
 
 export const ButtonSize = {
   s: 'size-s',
@@ -23,7 +23,7 @@ type ButtonProps = Partial<{
 }>;
 
 export interface Button extends Component<ButtonProps, Component<any, any>> {
-  setClickHandler(onClick: (e?: PointerEvent) => void): Button;
+  setClickHandler(onClick: (e?: PointerEvent) => void): this;
 }
 
 export default class ButtonComponent
@@ -32,7 +32,7 @@ export default class ButtonComponent
 {
   private onClick: (e?: PointerEvent) => void = () => {};
 
-  public setClickHandler(onClick: (e?: PointerEvent) => void): ButtonComponent {
+  public setClickHandler(onClick: (e?: PointerEvent) => void): this {
     this.onClick = onClick;
     return this;
   }
@@ -52,6 +52,8 @@ export default class ButtonComponent
     host: HTMLButtonElement,
     props: ButtonProps,
   ): void {
+    if (!host) return;
+
     const { type, label, size, classList = [] } = this.mergeDefaultProps(props);
     host.type = type;
     host.textContent = label;

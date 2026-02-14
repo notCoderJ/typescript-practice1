@@ -1,4 +1,4 @@
-import type { Component } from './component-base';
+import type { Component } from './components/component-base';
 import { CLASS_NAME } from './constants.js';
 
 const MODAL_ACTION = { close: 'close' } as const;

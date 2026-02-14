@@ -7,11 +7,12 @@ export const CLASS_NAME = {
   modalSlot: 'modal-slot',
   modalCloseButton: 'close-btn',
   form: 'add-form',
-  addButton: 'add-btn',
+  controlArea: 'control-wrap',
   control: 'control',
   controlLabel: 'control__label',
   controlInput: 'control__input',
   contentList: 'app__contents',
+  addButton: 'add-btn',
   contentItem: 'content',
   contentFigure: 'content__figure',
   contentText: 'content__description',
@@ -19,9 +20,4 @@ export const CLASS_NAME = {
   itemRemoveButton: 'rm-btn',
   scroll: 'scroll',
   hidden: 'hidden',
-} as const;
-
-export const FormLabel = {
-  title: 'Title',
-  body: 'Body',
 } as const;

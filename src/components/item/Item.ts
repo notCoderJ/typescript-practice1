@@ -1,5 +1,4 @@
-import type { Component } from '../../component-base';
-import ComponentBase from '../../component-base.js';
+import ComponentBase, { type Component } from '../component-base.js';
 import { CLASS_NAME } from '../../constants.js';
 import {
   ItemType,
@@ -14,7 +13,7 @@ type ItemProps = TextItemProps | ImageItemProps | VideoItemProps;
 
 export interface Item extends Component<ItemProps, Component<any, any>> {
   readonly id: number;
-  setRemoveHandler(onRemove: (item: Item) => void): Item;
+  setRemoveHandler(onRemove: (item: Item) => void): this;
 }
 
 export default class ItemComponent
@@ -25,18 +24,26 @@ export default class ItemComponent
   private onRemove: (item: Item) => void = () => {};
   private static defaultResourceSize = { width: 480, height: 240 } as const;
 
-  public setRemoveHandler(onRemove: (item: Item) => void): Item {
+  constructor(initProps: ItemProps) {
+    super(initProps);
+    this.appendChildren(this.host!, initProps);
+  }
+
+  public setRemoveHandler(onRemove: (item: Item) => void): this {
     this.onRemove = onRemove;
     return this;
   }
 
-  protected createHostElement(props: ItemProps): HTMLLIElement {
+  protected createHostElement(_: ItemProps): HTMLLIElement {
     const hostEl = document.createElement<'li'>('li');
     hostEl.className = CLASS_NAME.contentItem;
+    return hostEl;
+  }
 
+  private appendChildren(host: HTMLLIElement, props: ItemProps): void {
     if (props.type !== ItemType.text) {
       const mediaEl = this.createMediaElementByType(props);
-      hostEl.append(mediaEl);
+      host.append(mediaEl);
     }
 
     const textEl = this.createTextElement(props);
@@ -45,8 +52,7 @@ export default class ItemComponent
     rmButtonEl.innerHTML = '<i class="fa-solid fa-xmark"></i>';
     rmButtonEl.addEventListener('click', () => this.onRemove(this));
 
-    hostEl.append(textEl, rmButtonEl);
-    return hostEl;
+    host.append(textEl, rmButtonEl);
   }
 
   private createMediaElementByType(
@@ -59,7 +65,7 @@ export default class ItemComponent
         return this.createIframeElement(props);
       default:
         const neverType: never = props;
-        throw new Error(`Not supported media type ${props}`);
+        throw new Error(`Not supported media type ${neverType}`);
     }
   }
 

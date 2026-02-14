@@ -1,4 +1,4 @@
-import ComponentBase, { type Component } from '../component-base.js';
+import ComponentBase, { type Component } from './component-base.js';
 import { CLASS_NAME } from '../constants.js';
 
 export const ControlType = {
@@ -30,6 +30,12 @@ export default class ControlComponent
   private controlEl: HTMLInputElement | HTMLTextAreaElement | null = null;
   private _value = '';
 
+  constructor(initProps: ControlProps) {
+    super(initProps);
+    this._value = initProps.initValue ?? '';
+    this.appendChildren(this.host!, initProps);
+  }
+
   public get label(): string {
     return this.props.label;
   }
@@ -50,33 +56,34 @@ export default class ControlComponent
     this._value = '';
   }
 
-  protected override beforeHostElementBuild(props: ControlProps): void {
-    this._value = props.initValue ?? '';
-  }
-
   protected override release(): void {
     this.controlEl?.remove();
     this.controlEl = null;
   }
 
-  protected createHostElement(props: ControlProps): HTMLParagraphElement {
+  protected createHostElement(_: ControlProps): HTMLParagraphElement {
     const hostEl = document.createElement<'p'>('p');
     hostEl.className = CLASS_NAME.control;
+    return hostEl;
+  }
 
+  private appendChildren(
+    host: HTMLParagraphElement,
+    props: ControlProps,
+  ): void {
     const labelEl = document.createElement<'label'>('label');
     labelEl.className = CLASS_NAME.controlLabel;
     labelEl.htmlFor = this.controlId;
     labelEl.textContent = this.props.label;
 
     this.controlEl = this.createControlElement(props);
-    hostEl.append(labelEl, this.controlEl);
-    return hostEl;
+    host.append(labelEl, this.controlEl);
   }
 
   private createControlElement(
     props: ControlProps,
   ): HTMLInputElement | HTMLTextAreaElement {
-    const { type = ControlType.text, label, initValue, placeholder } = props;
+    const { type = ControlType.text, placeholder } = props;
     let controlEl: HTMLInputElement | HTMLTextAreaElement;
 
     if (type !== ControlType.textarea) {
