@@ -185,9 +185,10 @@ button {
   align-self: flex-end;
 }
 
-.add-form {
+.add-form,
+.control-wrap {
+  flex: 1;
   display: flex;
-  height: 100%;
   flex-direction: column;
 }
 
