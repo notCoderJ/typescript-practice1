@@ -36,6 +36,10 @@ export default class AddFormComponent
     return this;
   }
 
+  public override mount(): void {
+    setTimeout(() => this.children[0]?.focus(), 0);
+  }
+
   protected createHostElement(): HTMLFormElement {
     const hostEl = document.createElement<'form'>('form');
     hostEl.className = CLASS_NAME.form;

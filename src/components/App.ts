@@ -83,11 +83,11 @@ export default class AppComponent extends ComponentBase<
         }),
       ])
       .setSubmitHandler((data) => {
-        this.list.add(
-          this.createItem(type, data as FormData) //
-            .setRemoveHandler((item) => this.list.remove(item)),
-        );
+        const item = this.createItem(type, data as FormData) //
+          .setRemoveHandler((item) => this.list.remove(item));
+        this.list.add(item);
         this.modal.hide();
+        item.host!.scrollIntoView({ behavior: 'smooth' });
       });
   }
 

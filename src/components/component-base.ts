@@ -2,8 +2,10 @@ type Props = Record<string, any>;
 export type RenderOrder = 'first' | 'last';
 
 export interface Component<P extends Props, C extends Component<any, any>> {
+  host: HTMLElement | null;
   setProps(props: Partial<P>): this;
   setChildren(children: C[]): this;
+  mount(): void;
   unMount(): void;
   render(target: Element | null, order?: RenderOrder): this;
 }
@@ -13,8 +15,8 @@ export default abstract class ComponentBase<
   P extends Props,
   C extends Component<any, any>,
 > implements Component<P, C> {
+  public host: E | null = null;
   protected parent: Element | null = null;
-  protected host: E | null = null;
   protected props: P;
   protected children: C[] = [];
 
@@ -57,6 +59,8 @@ export default abstract class ComponentBase<
     return this;
   }
 
+  public mount(): void {}
+
   public unMount(): void {
     if (!this.host) return;
 
@@ -85,6 +89,7 @@ export default abstract class ComponentBase<
       this.parent.append(this.host);
     }
 
+    this.mount();
     return this;
   }
 }
