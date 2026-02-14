@@ -1,12 +1,12 @@
-import type { Component, Props } from './interface';
+import type { Component } from './component-base';
 import { CLASS_NAME } from './constants.js';
 
 const MODAL_ACTION = { close: 'close' } as const;
 
-interface Modal {
+export interface Modal {
   build(target?: Element | null): void;
   clear(): void;
-  show(target: Component<Props<{}>>): void;
+  show(target: Component<any, any> | null): void;
   hide(): void;
 }
 
@@ -14,7 +14,7 @@ export default class ModalService implements Modal {
   private isOpened = false;
   private modalBackdrop: HTMLDivElement | null = null;
   private modalSlot: HTMLElement | null = null;
-  private modalComponent: Component<Props<{}>> | null = null;
+  private modalComponent: Component<any, any> | null = null;
   private handleKeyClose = (e: KeyboardEvent) => {
     if (e.code === 'Escape') {
       this.hide();
@@ -65,7 +65,11 @@ export default class ModalService implements Modal {
     document.body.removeEventListener('keydown', this.handleKeyClose);
   }
 
-  public show(target: Component<Props<{}>> | null = null): void {
+  public show(target: Component<any, any> | null = null): void {
+    if (this.isOpened) {
+      this.hide();
+    }
+
     this.modalComponent = target;
     this.modalComponent?.render(this.modalSlot);
     this.modalBackdrop?.classList.remove(CLASS_NAME.hidden);

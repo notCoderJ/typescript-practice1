@@ -60,7 +60,7 @@ export default class AppComponent extends ComponentBase<
       new ButtonComponent({
         label,
         classList: [CLASS_NAME.menuButton],
-      }).setClickHandler(() => console.log(label)),
+      }).setClickHandler(() => this.modal.show(null)),
     );
 
     headerEl.prepend(h1);
