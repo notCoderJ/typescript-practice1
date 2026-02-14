@@ -119,6 +119,3 @@ function itemTypeToControlType(itemType: ItemType): ControlType {
       throw new Error(`Not supported type ${neverType}`);
   }
 }
-
-// https://fastly.picsum.photos/id/786/700/350.jpg?hmac=eI1TG9CaWM15B1mycXUjh88-YmKVkdx5GHLxXG43sJ4
-// https://www.youtube.com/embed/hYlBSiX28ps
