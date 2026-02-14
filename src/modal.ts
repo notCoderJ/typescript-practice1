@@ -21,7 +21,7 @@ export default class ModalService implements Modal {
     }
   };
 
-  public build(target?: Element | null): void {
+  public build(target?: Element | null): Modal {
     const parent = target ?? document.body;
     this.modalBackdrop = document.createElement<'div'>('div');
     this.modalBackdrop.classList.add(
@@ -49,6 +49,8 @@ export default class ModalService implements Modal {
     this.modalSlot.append(closeButton);
     this.modalBackdrop.append(this.modalSlot);
     parent.append(this.modalBackdrop);
+
+    return this;
   }
 
   public clear(): void {

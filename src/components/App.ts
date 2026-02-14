@@ -1,6 +1,8 @@
 import type { Modal } from '../modal';
+import type { List } from './List';
 import ComponentBase, { type Component } from '../component-base.js';
 import ButtonComponent, { type Button } from './Button.js';
+import ListComponent from './List.js';
 import { CLASS_NAME } from '../constants.js';
 
 const MenuType = {
@@ -27,6 +29,8 @@ export default class AppComponent extends ComponentBase<
   AppProps,
   Component<any, any>
 > {
+  private list: List | null = null;
+
   constructor(
     initialProps: AppProps = {} as AppProps,
     private modal: Modal,
@@ -34,12 +38,16 @@ export default class AppComponent extends ComponentBase<
     super(initialProps);
   }
 
+  protected override beforeHostElementBuild(): void {
+    this.list = new ListComponent();
+  }
+
   protected createHostElement(): HTMLElement {
     const hostEl = document.createElement<'section'>('section');
     hostEl.className = CLASS_NAME.app;
 
-    const headerEl = this.createHeader();
-    hostEl.prepend(headerEl);
+    hostEl.prepend(this.createHeader());
+    this.list!.render(hostEl);
 
     return hostEl;
   }
@@ -52,11 +60,12 @@ export default class AppComponent extends ComponentBase<
     h1.className = CLASS_NAME.appTitle;
     h1.textContent = 'MOTION';
 
-    const menuButtons = MENUS.map<Button>(({ label }) =>
-      new ButtonComponent({
-        label,
-        classList: [CLASS_NAME.menuButton],
-      }).setClickHandler(() => this.modal.show(null)),
+    const menuButtons = MENUS.map<Button>(
+      ({ label }) =>
+        new ButtonComponent({
+          label,
+          classList: [CLASS_NAME.menuButton],
+        }).setClickHandler(() => this.modal.show(null)), // TODO: input form & control
     );
 
     headerEl.prepend(h1);

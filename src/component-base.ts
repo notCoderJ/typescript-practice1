@@ -13,18 +13,20 @@ export default abstract class ComponentBase<
   P extends Props,
   C extends Component<any, any>,
 > implements Component<P, C> {
-  private parent: Element | null = null;
-  private host: E | null = null;
+  protected parent: Element | null = null;
+  protected host: E | null = null;
   protected props: P;
   protected children: C[] = [];
 
   constructor(initialProps: P = {} as P) {
+    this.beforeHostElementBuild();
     this.props = initialProps;
     this.host = this.createHostElement(this.props);
   }
 
   protected abstract createHostElement(props: P): E;
   protected clear(): void {}
+  protected beforeHostElementBuild(): void {}
   protected rerenderByProps(host: E, props: P): void {}
 
   protected rerenderByChildren(host: E, prev: C[], next: C[]): void {
