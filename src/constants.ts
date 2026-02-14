@@ -1,4 +1,5 @@
 export const CLASS_NAME = {
+  app: 'app',
   appHeader: 'app__header',
   appTitle: 'app__title',
   menuButton: 'menu-btn',
@@ -24,8 +25,6 @@ export const FIGURE_SIZE = {
   width: 480,
   height: 240,
 } as const;
-
-export const MENU = ['IMAGE', 'VIDEO', 'NOTE', 'TASK'] as const;
 
 export const FormLabel = {
   title: 'Title',

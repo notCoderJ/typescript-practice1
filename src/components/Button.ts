@@ -38,25 +38,25 @@ export default class ButtonComponent
   }
 
   protected createHostElement(props: ButtonProps): HTMLButtonElement {
-    const { type, label, size, classList } = this.getProps(props);
-    const host = document.createElement<'button'>('button');
-    host.type = type;
-    host.textContent = label;
-    host.className = `styled-button ${size}`;
-    host.classList.add(...classList);
-    host.addEventListener('click', (e) => this.onClick && this.onClick(e));
-    return host;
+    const { type, label, size, classList } = this.mergeDefaultProps(props);
+    const hostEl = document.createElement<'button'>('button');
+    hostEl.type = type;
+    hostEl.textContent = label;
+    hostEl.className = `styled-button ${size}`;
+    hostEl.classList.add(...classList);
+    hostEl.addEventListener('click', (e) => this.onClick && this.onClick(e));
+    return hostEl;
   }
 
   protected rerenderByProps(host: HTMLButtonElement, props: ButtonProps): void {
-    const { type, label, size, classList = [] } = this.getProps(props);
+    const { type, label, size, classList = [] } = this.mergeDefaultProps(props);
     host.type = type;
     host.textContent = label;
     host.className = `styled-button ${size}`;
     host.classList.add(...classList);
   }
 
-  private getProps(props: ButtonProps): Required<ButtonProps> {
+  private mergeDefaultProps(props: ButtonProps): Required<ButtonProps> {
     return {
       type: ButtonType.button,
       label: '',
