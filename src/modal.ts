@@ -5,7 +5,7 @@ const MODAL_ACTION = { close: 'close' } as const;
 
 export interface Modal {
   build(target?: Element | null): void;
-  clear(): void;
+  release(): void;
   show(target: Component<any, any> | null): void;
   hide(): void;
 }
@@ -53,7 +53,7 @@ export default class ModalService implements Modal {
     return this;
   }
 
-  public clear(): void {
+  public release(): void {
     this.modalComponent?.unMount();
     this.modalComponent = null;
 

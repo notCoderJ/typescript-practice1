@@ -1,4 +1,4 @@
-import type { Component, Props } from '../interface';
+import ComponentBase, { type Component } from '../component-base.js';
 import { CLASS_NAME } from '../constants.js';
 
 export const ControlType = {
@@ -9,114 +9,93 @@ export const ControlType = {
 
 export type ControlType = (typeof ControlType)[keyof typeof ControlType];
 
-type ControlProps = Props<{
+type ControlProps = {
   label: string;
+  type?: ControlType;
   initValue?: string;
   placeholder?: string;
-}>;
+};
 
-export interface Control extends Component<ControlProps> {
+export interface Control extends Component<ControlProps, Component<any, any>> {
   readonly label: string;
   readonly value: string;
-  setType(type: ControlType): Control;
-  clear(): void;
   focus(): void;
+  clear(): void;
 }
 
-export default class ControlComponent implements Control {
-  private controlEl: HTMLParagraphElement | null = null;
-  private inputEl: HTMLInputElement | HTMLTextAreaElement | null = null;
-  private _type: ControlType = ControlType.text;
-  private _label = '';
+export default class ControlComponent
+  extends ComponentBase<HTMLParagraphElement, ControlProps, Component<any, any>>
+  implements Control
+{
+  private controlEl: HTMLInputElement | HTMLTextAreaElement | null = null;
   private _value = '';
-  private handleChange = (e: Event) => {
-    const target = e.target as HTMLInputElement | HTMLTextAreaElement;
-    this._value = target.value;
-  };
-
-  constructor(public readonly props: ControlProps) {
-    this._label = this.props.label;
-    this.controlEl = this.createControlEl(this.props);
-    this.mount();
-  }
 
   public get label(): string {
-    return this._label;
+    return this.props.label;
   }
 
   public get value(): string {
     return this._value;
   }
 
-  public mount(): void {}
-
-  public unMount(): void {
-    if (!this.inputEl && !this.controlEl) return;
-
-    this.inputEl?.removeEventListener('change', this.handleChange);
-    this.inputEl?.remove();
-    this.controlEl?.remove();
-
-    this.inputEl = null;
-    this.controlEl = null;
-    this.clear();
-  }
-
-  public setType(type: ControlType): ControlComponent {
-    this._type = type;
-    return this;
+  private get controlId(): string {
+    return this.props.label.toLowerCase();
   }
 
   public focus(options?: FocusOptions | undefined): void {
-    this.inputEl?.focus(options);
+    this.controlEl?.focus(options);
   }
 
   public clear(): void {
     this._value = '';
   }
 
-  public render(target?: Element | null): void {
-    if (this.controlEl === null) {
-      this.controlEl = this.createControlEl(this.props);
-    }
-
-    const parent = target ?? document.body;
-    parent.append(this.controlEl);
+  protected override beforeHostElementBuild(props: ControlProps): void {
+    this._value = props.initValue ?? '';
   }
 
-  private createControlEl(props: ControlProps): HTMLParagraphElement {
-    const controlEl = document.createElement<'p'>('p');
-    controlEl.className = CLASS_NAME.control;
+  protected override release(): void {
+    this.controlEl?.remove();
+    this.controlEl = null;
+  }
+
+  protected createHostElement(props: ControlProps): HTMLParagraphElement {
+    const hostEl = document.createElement<'p'>('p');
+    hostEl.className = CLASS_NAME.control;
 
     const labelEl = document.createElement<'label'>('label');
     labelEl.className = CLASS_NAME.controlLabel;
-    labelEl.htmlFor = this.props.label.toLowerCase();
+    labelEl.htmlFor = this.controlId;
     labelEl.textContent = this.props.label;
 
-    this.inputEl = this.createInputEl(props);
-    controlEl.append(labelEl, this.inputEl);
-    return controlEl;
+    this.controlEl = this.createControlElement(props);
+    hostEl.append(labelEl, this.controlEl);
+    return hostEl;
   }
 
-  private createInputEl(
+  private createControlElement(
     props: ControlProps,
   ): HTMLInputElement | HTMLTextAreaElement {
-    let inputEl: HTMLInputElement | HTMLTextAreaElement;
-    const { label, initValue, placeholder = '' } = props;
+    const { type = ControlType.text, label, initValue, placeholder } = props;
+    let controlEl: HTMLInputElement | HTMLTextAreaElement;
 
-    if (this._type !== ControlType.textarea) {
-      inputEl = document.createElement<'input'>('input');
-      inputEl.type = this._type;
+    if (type !== ControlType.textarea) {
+      controlEl = document.createElement<'input'>('input');
+      controlEl.type = type;
     } else {
-      inputEl = document.createElement<'textarea'>('textarea');
-      inputEl.classList.add(CLASS_NAME.scroll);
+      controlEl = document.createElement<'textarea'>('textarea');
+      controlEl.classList.add(CLASS_NAME.scroll);
     }
 
-    inputEl.id = label.toLowerCase();
-    inputEl.classList.add(CLASS_NAME.controlInput);
-    inputEl.placeholder = placeholder;
-    inputEl.value = initValue ?? this.value;
-    inputEl.addEventListener('change', this.handleChange);
-    return inputEl;
+    controlEl.id = this.controlId;
+    controlEl.classList.add(CLASS_NAME.controlInput);
+    controlEl.placeholder = placeholder ?? '';
+    controlEl.value = this.value;
+    controlEl.addEventListener('change', (e: Event) => {
+      const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+      this._value = target.value;
+    });
+
+    return controlEl;
   }
 }

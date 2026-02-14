@@ -19,14 +19,14 @@ export default abstract class ComponentBase<
   protected children: C[] = [];
 
   constructor(initialProps: P = {} as P) {
-    this.beforeHostElementBuild();
     this.props = initialProps;
+    this.beforeHostElementBuild(this.props);
     this.host = this.createHostElement(this.props);
   }
 
   protected abstract createHostElement(props: P): E;
-  protected clear(): void {}
-  protected beforeHostElementBuild(): void {}
+  protected release(): void {}
+  protected beforeHostElementBuild(props: P): void {}
   protected rerenderByProps(host: E, props: P): void {}
 
   protected rerenderByChildren(host: E, prev: C[], next: C[]): void {
@@ -59,7 +59,7 @@ export default abstract class ComponentBase<
   public unMount(): void {
     if (!this.host) return;
 
-    this.clear();
+    this.release();
     this.removeChildren(this.children);
     this.children = [];
     this.host.remove();
