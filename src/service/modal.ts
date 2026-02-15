@@ -6,7 +6,7 @@ const MODAL_ACTION = { close: 'close' } as const;
 export default class Modal {
   private static isOpened = false;
   private static modalBackdrop: HTMLDivElement | null = null;
-  private static slotElement: HTMLElement | null = null;
+  private static slotElement: HTMLDivElement | null = null;
   private static modalComponent: Component<any, any> | null = null;
   private static handleKeyClose = (e: KeyboardEvent) => {
     if (e.code === 'Escape') {
@@ -26,16 +26,30 @@ export default class Modal {
       }
     });
 
-    const slotElement = document.createElement<'section'>('section');
-    slotElement.className = CLASS_NAME.modalSlot;
+    const modalContainer = document.createElement<'section'>('section');
+    modalContainer.className = CLASS_NAME.modalContainer;
+    modalContainer.tabIndex = 0;
 
     const closeButton = document.createElement<'button'>('button');
     closeButton.classList.add('x-button', CLASS_NAME.modalCloseButton);
     closeButton.setAttribute('data-action', MODAL_ACTION.close);
     closeButton.innerHTML = `<i data-action="${MODAL_ACTION.close}" class="fa-solid fa-xmark"></i>`;
 
-    slotElement.append(closeButton);
-    modalBackdrop.append(slotElement);
+    const slotElement = document.createElement<'div'>('div');
+    slotElement.className = CLASS_NAME.modalSlot;
+
+    const tabStealer = document.createElement<'button'>('button');
+    tabStealer.className = CLASS_NAME.tabStealer;
+    tabStealer.addEventListener('focus', () => {
+      if (Modal.isOpened) {
+        modalContainer.focus();
+      }
+    });
+
+    modalContainer.append(closeButton);
+    modalContainer.append(slotElement);
+    modalContainer.append(tabStealer);
+    modalBackdrop.append(modalContainer);
     parent.append(modalBackdrop);
 
     Modal.slotElement = slotElement;

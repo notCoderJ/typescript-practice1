@@ -45,7 +45,8 @@ button {
   font-weight: bold;
   color: var(--smokywhite);
 
-  &:hover {
+  &:hover,
+  &:focus {
     opacity: 0.6;
     color: var(--text-accent-color);
   }
@@ -75,7 +76,8 @@ button {
   font-size: var(--font-size-m);
   color: var(--accent-color);
 
-  &:hover {
+  &:hover,
+  &:focus {
     opacity: 0.6;
   }
 }
@@ -192,10 +194,10 @@ button {
   background-color: var(--translucent-black);
 }
 
-.modal-slot {
+.modal-container {
   display: flex;
   flex-direction: column;
-  row-gap: 0.3rem;
+  outline: none;
   width: 100%;
   max-width: 550px;
   height: 25vh;
@@ -203,8 +205,20 @@ button {
   background: var(--component-bg-gradient);
 }
 
+.modal-slot {
+  flex: 1;
+  display: flex;
+  margin-top: 0.3rem;
+}
+
 .close-btn {
   align-self: flex-end;
+}
+
+.tab-stealer {
+  width: 0;
+  height: 0;
+  opacity: 0;
 }
 
 .add-form,
