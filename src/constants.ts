@@ -18,6 +18,9 @@ export const CLASS_NAME = {
   contentText: 'content__description',
   contentTitle: 'content__title',
   itemRemoveButton: 'rm-btn',
+  draggable: 'draggable',
+  dragging: 'dragging',
+  dragover: 'dragover',
   scroll: 'scroll',
   hidden: 'hidden',
 } as const;

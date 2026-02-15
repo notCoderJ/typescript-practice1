@@ -6,6 +6,7 @@ import {
   type TextItemProps,
   type VideoItemProps,
 } from './item.interface.js';
+import DragNDrop from '../../service/dragNdrop.js';
 
 let gId = 0;
 
@@ -24,9 +25,16 @@ export default class ItemComponent
   private onRemove: (item: Item) => void = () => {};
   private static defaultResourceSize = { width: 480, height: 240 } as const;
 
-  constructor(initProps: ItemProps) {
+  constructor(
+    initProps: ItemProps,
+    private readonly draggable = true,
+  ) {
     super(initProps);
     this.appendChildren(this.host!, initProps);
+
+    if (this.draggable) {
+      this.setupDragNDrop(this);
+    }
   }
 
   public setRemoveHandler(onRemove: (item: Item) => void): this {
@@ -38,6 +46,25 @@ export default class ItemComponent
     const hostEl = document.createElement<'li'>('li');
     hostEl.className = CLASS_NAME.contentItem;
     return hostEl;
+  }
+
+  private setupDragNDrop(item: Item): void {
+    const {
+      onDragstart, //
+      onDragend, //
+      onDragover, //
+      onDragleave, //
+      onDrop, //
+    } = DragNDrop.makeDragHandlers(item);
+
+    const host = item.host!;
+    host.draggable = true;
+    host.classList.add(CLASS_NAME.draggable);
+    host.addEventListener('dragstart', onDragstart);
+    host.addEventListener('dragend', onDragend);
+    host.addEventListener('dragover', onDragover);
+    host.addEventListener('dragleave', onDragleave);
+    host.addEventListener('drop', onDrop);
   }
 
   private appendChildren(host: HTMLLIElement, props: ItemProps): void {

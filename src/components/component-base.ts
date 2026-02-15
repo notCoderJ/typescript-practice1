@@ -1,5 +1,8 @@
 type Props = Record<string, any>;
-export type RenderOrder = 'first' | 'last';
+export type RenderLocation = {
+  order: 'start' | 'end' | 'before';
+  target?: HTMLElement | null;
+};
 
 export interface Component<P extends Props, C extends Component<any, any>> {
   host: HTMLElement | null;
@@ -7,7 +10,7 @@ export interface Component<P extends Props, C extends Component<any, any>> {
   setChildren(children: C[]): this;
   mount(): void;
   unMount(): void;
-  render(target: Element | null, order?: RenderOrder): this;
+  render(target: Element | null, location?: RenderLocation): this;
 }
 
 export default abstract class ComponentBase<
@@ -72,21 +75,23 @@ export default abstract class ComponentBase<
     this.parent = null;
   }
 
-  public render(target: Element | null, order?: RenderOrder): this {
+  public render(
+    parent: Element | null,
+    location: RenderLocation = { order: 'end' },
+  ): this {
     if (!this.host) {
       throw new Error('Unable to render removed components!');
     }
 
-    if (!!this.parent) {
-      this.parent.removeChild(this.host);
-    }
+    this.parent = parent ?? document.body;
+    const { order, target = null } = location;
 
-    this.parent = target ?? document.body;
-
-    if (order === 'first') {
+    if (order === 'end') {
+      this.parent.append(this.host);
+    } else if (order === 'start') {
       this.parent.prepend(this.host);
     } else {
-      this.parent.append(this.host);
+      this.parent.insertBefore(this.host, target);
     }
 
     this.mount();

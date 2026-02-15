@@ -13,9 +13,7 @@ type DragNDropHandlers = Record<
   DragEventHandler
 >;
 
-interface DragNDrop {}
-
-export default class DragNDropService implements DragNDrop {
+export default class DragNDrop {
   private static itemOnDrag: Item | null = null;
 
   public static makeDragHandlers(item: Item): DragNDropHandlers {
@@ -30,12 +28,12 @@ export default class DragNDropService implements DragNDrop {
     };
 
     const onDragstart: DragEventHandler = () => {
-      DragNDropService.itemOnDrag = item;
+      DragNDrop.itemOnDrag = item;
       item.host?.classList.add(CLASS_NAME.dragging);
     };
 
     const onDragend: DragEventHandler = () => {
-      DragNDropService.itemOnDrag = null;
+      DragNDrop.itemOnDrag = null;
       item.host?.classList.remove(CLASS_NAME.dragging);
     };
 
@@ -64,7 +62,7 @@ export default class DragNDropService implements DragNDrop {
     const onDrop: DragEventHandler = () => {
       clearDragover(item.host);
 
-      const target = DragNDropService.itemOnDrag;
+      const target = DragNDrop.itemOnDrag;
       if (!!target?.host && !!item.host && item.id !== target.id) {
         const targetTop = target.host.getBoundingClientRect().top;
         const currentTop = item.host.getBoundingClientRect().top;

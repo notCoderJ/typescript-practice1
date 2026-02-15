@@ -20,6 +20,8 @@
   --font-size-m: 1rem;
   --font-size-l: 1.25rem;
   --font-size-xl: 2.5rem;
+
+  --infinity-delay: 2147483647s;
 }
 
 body {
@@ -72,6 +74,10 @@ button {
   background-color: transparent;
   font-size: var(--font-size-m);
   color: var(--accent-color);
+
+  &:hover {
+    opacity: 0.6;
+  }
 }
 
 .scroll {
@@ -125,12 +131,28 @@ button {
 .content {
   display: flex;
   max-height: 240px;
+  border: solid 2px transparent;
   border-radius: 0.8rem;
   background: var(--component-bg-gradient);
+  box-shadow:
+    var(--shadow-color) 0px 3px 6px,
+    var(--shadow-color) 0px 3px 6px;
   overflow: hidden;
 
   &:not(:first-child) {
     margin-top: 1.5rem;
+  }
+
+  &.draggable {
+    cursor: pointer;
+  }
+
+  &.dragging {
+    opacity: 0.5;
+  }
+
+  &.dragover {
+    border-color: var(--accent-color);
   }
 }
 
@@ -218,6 +240,15 @@ button {
   background-color: var(--text-edit-bg-color);
   font-size: var(--font-size-l);
   color: var(--smokywhite);
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    transition:
+      background-color var(--infinity-delay) 0s,
+      color var(--infinity-delay) 0s;
+  }
 }
 
 .add-btn {

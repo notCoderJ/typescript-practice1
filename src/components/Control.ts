@@ -44,7 +44,7 @@ export default class ControlComponent
     return this._value;
   }
 
-  private get controlId(): string {
+  private get id(): string {
     return this.props.label.toLowerCase();
   }
 
@@ -73,7 +73,7 @@ export default class ControlComponent
   ): void {
     const labelEl = document.createElement<'label'>('label');
     labelEl.className = CLASS_NAME.controlLabel;
-    labelEl.htmlFor = this.controlId;
+    labelEl.htmlFor = this.id;
     labelEl.textContent = this.props.label;
 
     this.controlEl = this.createControlElement(props);
@@ -94,7 +94,7 @@ export default class ControlComponent
       controlEl.classList.add(CLASS_NAME.scroll);
     }
 
-    controlEl.id = this.controlId;
+    controlEl.id = this.id;
     controlEl.classList.add(CLASS_NAME.controlInput);
     controlEl.placeholder = placeholder ?? '';
     controlEl.value = this.value;
