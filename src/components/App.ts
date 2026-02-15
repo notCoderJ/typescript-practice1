@@ -1,4 +1,3 @@
-import type { Modal } from '../modal';
 import type { List } from './List';
 import ComponentBase, { type Component } from './component-base.js';
 import ListComponent from './List.js';
@@ -8,6 +7,7 @@ import ControlComponent, { ControlType } from './Control.js';
 import ItemComponent from './item/Item.js';
 import { ItemType } from './item/item.interface.js';
 import { CLASS_NAME } from '../constants.js';
+import Modal from '../service/modal.js';
 
 type Menu = { label: string; type: ItemType };
 
@@ -34,10 +34,7 @@ export default class AppComponent extends ComponentBase<
 > {
   private list!: List;
 
-  constructor(
-    initialProps: AppProps = {} as AppProps,
-    private modal: Modal,
-  ) {
+  constructor(initialProps: AppProps = {} as AppProps) {
     super(initialProps);
     this.appendChildren(this.host!);
   }
@@ -53,7 +50,7 @@ export default class AppComponent extends ComponentBase<
       new ButtonComponent({
         label,
         classList: [CLASS_NAME.menuButton],
-      }).setClickHandler(() => this.modal.show(this.createAddFormByType(type))),
+      }).setClickHandler(() => Modal.show(this.createAddFormByType(type))),
     );
 
     host.prepend(this.createHeader(menuButtons));
@@ -86,7 +83,7 @@ export default class AppComponent extends ComponentBase<
         const item = this.createItem(type, data as FormData) //
           .setRemoveHandler((item) => this.list.remove(item));
         this.list.add(item);
-        this.modal.hide();
+        Modal.hide();
         item.host!.scrollIntoView({ behavior: 'smooth' });
       });
   }
